@@ -24,7 +24,6 @@ body {
 }
 
 #view {
-  border: 1px solid black;
   width: 800px;
   aspect-ratio: 1;
   background-color: #EE9B00;

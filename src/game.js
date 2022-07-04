@@ -14,14 +14,17 @@
       this.#color = color;
     }
 
-    move({ maxX, maxY, minY, minX }) {
+    move({ maxX, maxY, minX, minY }) {
       const { x, y } = this.#position;
 
-      if (x > (maxX - this.#size) || x < 0) {
+      const rightBound = maxX - this.#size;
+      const bottomBound = maxY - this.#size;
+
+      if (x < minX || x > rightBound) {
         this.#speed.dx = - this.#speed.dx;
       }
 
-      if (y > (maxY - this.#size) || y < 0) {
+      if (y > bottomBound || y < minY) {
         this.#speed.dy = - this.#speed.dy;
       }
 
@@ -29,8 +32,8 @@
       this.#position.x += this.#speed.dx;
     }
 
-    hasHitFloor(view) {
-      return this.#position.y + this.#size >= view.maxY;
+    hasHitFloor(bounds) {
+      return this.#position.y + this.#size >= bounds.maxY;
     }
 
     bounceUp() {
@@ -52,57 +55,6 @@
     }
   }
 
-  const addClickEvent = (element, ball, scoreBoard) => {
-    element.addEventListener('click', () => {
-      ball.bounceUp();
-      scoreBoard.increase();
-    });
-  };
-
-  const px = (value) => value + 'px';
-
-  const createBallElement = (ball) => {
-    const viewElement = document.getElementById('view');
-    const { id, position, size, speed, color } = ball.getInfo();
-    const ballElement = document.createElement('div');
-    ballElement.id = id;
-    ballElement.style.top = px(position.y);
-    ballElement.style.left = px(position.x);
-    ballElement.style.width = px(size);
-    ballElement.style['background-color'] = color;
-    viewElement.appendChild(ballElement);
-  };
-
-  const createScoreElement = (scoreBoard) => {
-    const { id, score } = scoreBoard.getInfo();
-    const scoreElement = document.createElement('div');
-    scoreElement.id = id;
-    scoreElement.innerText = score;
-    const scoreBoardElement = document.getElementById('score-board');
-    scoreBoardElement.appendChild(scoreElement);
-  };
-
-  const updateBallElement = (ball) => {
-    const ballElement = document.getElementById('ball');
-    const { position } = ball.getInfo();
-    ballElement.style.top = px(position.y);
-    ballElement.style.left = px(position.x);
-  };
-  const updateScoreBoardElement = (score) => {
-    const scoreElement = document.getElementById('score');
-    scoreElement.innerText = score.getScore();
-  };
-
-  const createView = () => {
-    const view = {};
-    const viewElement = document.getElementById('view');
-    view.maxY = viewElement.clientHeight;
-    view.maxX = viewElement.clientWidth;
-    view.minY = viewElement.clientTop;
-    view.minX = viewElement.clientLeft;
-    return view;
-  };
-
   class ScoreBoard {
     #score;
     #id;
@@ -116,7 +68,6 @@
     }
 
     getInfo() {
-      console.log({ id: this.#id, score: this.#score });
       return { id: this.#id, score: this.#score };
     }
 
@@ -125,26 +76,85 @@
     }
   }
 
-  const startGame = (event) => {
-    const view = createView();
+  const addClickEvent = (element, ball, scoreBoard) => {
+    element.addEventListener('click', () => {
+      ball.bounceUp();
+      scoreBoard.increase();
+    });
+  };
+
+  const px = (value) => value + 'px';
+
+  const createBallElement = (ball) => {
+    const { id, position, size, color } = ball.getInfo();
+
+    const viewElement = document.getElementById('view');
+    const ballElement = document.createElement('div');
+
+    ballElement.id = id;
+    ballElement.style.top = px(position.y);
+    ballElement.style.left = px(position.x);
+    ballElement.style.width = px(size);
+    ballElement.style['background-color'] = color;
+
+    viewElement.appendChild(ballElement);
+    return ballElement;
+  };
+
+  const createScoreElement = (scoreBoard) => {
+    const { id, score } = scoreBoard.getInfo();
+
+    const scoreBoardElement = document.getElementById('score-board');
+
+    const scoreElement = document.createElement('div');
+    scoreElement.id = id;
+    scoreElement.innerText = score;
+    scoreBoardElement.appendChild(scoreElement);
+    return scoreElement;
+  };
+
+  const updateBallElement = (ball) => {
+    const ballElement = document.getElementById('ball');
+    const { position } = ball.getInfo();
+    ballElement.style.top = px(position.y);
+    ballElement.style.left = px(position.x);
+  };
+
+  const updateScoreBoardElement = (score) => {
+    const scoreElement = document.getElementById('score');
+    scoreElement.innerText = score.getScore();
+  };
+
+  const createBounds = () => {
+    const view = {};
+    const viewElement = document.getElementById('view');
+    view.maxY = viewElement.clientHeight;
+    view.maxX = viewElement.clientWidth;
+    view.minY = viewElement.clientTop;
+    view.minX = viewElement.clientLeft;
+    return view;
+  };
+
+  const startGame = () => {
+    const bounds = createBounds();
     const ball = new Ball('ball', 100, '#AE2012', { x: 0, y: 0 }, { dx: 2, dy: 4 });
     const scoreBoard = new ScoreBoard('score');
-    createBallElement(ball);
+    const ballElement = createBallElement(ball);
     createScoreElement(scoreBoard);
 
-    addClickEvent(document.getElementById('ball'), ball, scoreBoard);
+    addClickEvent(ballElement, ball, scoreBoard);
 
     const intervalId = setInterval(() => {
-      if (ball.hasHitFloor(view)) {
+      if (ball.hasHitFloor(bounds)) {
         clearInterval(intervalId);
         alert('Game over.');
         return;
       }
-      ball.move(view);
+      ball.move(bounds);
       updateBallElement(ball);
       updateScoreBoardElement(scoreBoard);
     }, 30);
   };
 
-  window.onload = (event) => startGame(event);
+  window.onload = () => startGame();
 })();
