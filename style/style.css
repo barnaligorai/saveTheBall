@@ -1,14 +1,14 @@
-*{
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-body{
+body {
   background-color: #e9d8a6;
 }
 
-.body-wrapper{
+.body-wrapper {
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -17,17 +17,13 @@ body{
   row-gap: 10px;
 }
 
-#ball{
+#ball {
   aspect-ratio: 1;
   border-radius: 50%;
   position: relative;
-  /* width: 100px;
-  background-color: #AE2012;
-  font-size: 2em;
-  color: #001219; */
 }
 
-#view{
+#view {
   border: 1px solid black;
   width: 800px;
   aspect-ratio: 1;
@@ -41,28 +37,24 @@ header{
   border-bottom: 1px solid #005F73;
 }
 
-#game{
+#game {
   display: flex;
   column-gap: 10px;
 }
 
-#score{
+#score-board {
   width: 200px;
   background-color: #94D2BD;
   color: #005F73;
-  /* display: flex; */
-  /* flex-direction: column; */
-  /* justify-content: center; */
-  /* align-items: center; */
 }
 
-#score h2{
+#score-board .heading {
   border-bottom: 1px solid #005F73;
   margin: 10px;
   text-align: center;
 }
 
-#score section{
+#score {
   color: white;
   font-size: 5em;
   text-align: center;

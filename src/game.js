@@ -17,11 +17,11 @@
     move({ maxX, maxY, minY, minX }) {
       const { x, y } = this.#position;
 
-      if (x > (maxX - this.#size) || x < minX) {
+      if (x > (maxX - this.#size) || x < 0) {
         this.#speed.dx = - this.#speed.dx;
       }
 
-      if (y > (maxY - this.#size) || y < minY) {
+      if (y > (maxY - this.#size) || y < 0) {
         this.#speed.dy = - this.#speed.dy;
       }
 
@@ -52,8 +52,11 @@
     }
   }
 
-  const addClickEvent = (element, ball) => {
-    element.addEventListener('click', () => ball.bounceUp());
+  const addClickEvent = (element, ball, scoreBoard) => {
+    element.addEventListener('click', () => {
+      ball.bounceUp();
+      scoreBoard.increase();
+    });
   };
 
   const px = (value) => value + 'px';
@@ -70,11 +73,24 @@
     viewElement.appendChild(ballElement);
   };
 
+  const createScoreElement = (scoreBoard) => {
+    const { id, score } = scoreBoard.getInfo();
+    const scoreElement = document.createElement('div');
+    scoreElement.id = id;
+    scoreElement.innerText = score;
+    const scoreBoardElement = document.getElementById('score-board');
+    scoreBoardElement.appendChild(scoreElement);
+  };
+
   const updateBallElement = (ball) => {
     const ballElement = document.getElementById('ball');
     const { position } = ball.getInfo();
     ballElement.style.top = px(position.y);
     ballElement.style.left = px(position.x);
+  };
+  const updateScoreBoardElement = (score) => {
+    const scoreElement = document.getElementById('score');
+    scoreElement.innerText = score.getScore();
   };
 
   const createView = () => {
@@ -87,11 +103,36 @@
     return view;
   };
 
+  class ScoreBoard {
+    #score;
+    #id;
+    constructor(id) {
+      this.#id = id;
+      this.#score = 0;
+    }
+
+    increase() {
+      this.#score++;
+    }
+
+    getInfo() {
+      console.log({ id: this.#id, score: this.#score });
+      return { id: this.#id, score: this.#score };
+    }
+
+    getScore() {
+      return this.#score;
+    }
+  }
+
   const startGame = (event) => {
     const view = createView();
-    const ball = new Ball('ball', 100, 'red', { x: 100, y: 100 }, { dx: 2, dy: 4 });
+    const ball = new Ball('ball', 100, '#AE2012', { x: 0, y: 0 }, { dx: 2, dy: 4 });
+    const scoreBoard = new ScoreBoard('score');
     createBallElement(ball);
-    addClickEvent(document.getElementById('ball'), ball);
+    createScoreElement(scoreBoard);
+
+    addClickEvent(document.getElementById('ball'), ball, scoreBoard);
 
     const intervalId = setInterval(() => {
       if (ball.hasHitFloor(view)) {
@@ -99,8 +140,9 @@
         alert('Game over.');
         return;
       }
-      updateBallElement(ball);
       ball.move(view);
+      updateBallElement(ball);
+      updateScoreBoardElement(scoreBoard);
     }, 30);
   };
 
