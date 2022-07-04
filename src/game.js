@@ -36,8 +36,14 @@
       return this.#position.y + this.#size >= bounds.maxY;
     }
 
-    bounceUp() {
+    bounceUp(clickedOnX) {
+      this.#speed.dx = Math.abs(this.#speed.dx);
+      if (clickedOnX > 50) {
+        this.#speed.dx = -this.#speed.dx;
+      }
+
       this.#position.y -= 100;
+
       if (this.#position.y < 0) {
         this.#speed.dy = -this.#speed.dy;
         this.#position.y = 0;
@@ -77,8 +83,8 @@
   }
 
   const addClickEvent = (element, balloon, scoreBoard) => {
-    element.addEventListener('click', () => {
-      balloon.bounceUp();
+    element.addEventListener('click', (event) => {
+      balloon.bounceUp(event.offsetX);
       scoreBoard.increase();
     });
   };
@@ -140,6 +146,7 @@
     const balloon = new Balloon('balloon', 100, '#AE2012', { x: 0, y: 0 }, { dx: 2, dy: 4 });
     const scoreBoard = new ScoreBoard('score');
     const balloonElement = createBalloonElement(balloon);
+
     createScoreElement(scoreBoard);
 
     addClickEvent(balloonElement, balloon, scoreBoard);
