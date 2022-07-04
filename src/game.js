@@ -1,5 +1,5 @@
 (function () {
-  class Ball {
+  class Balloon {
     #id;
     #position;
     #size;
@@ -76,29 +76,29 @@
     }
   }
 
-  const addClickEvent = (element, ball, scoreBoard) => {
+  const addClickEvent = (element, balloon, scoreBoard) => {
     element.addEventListener('click', () => {
-      ball.bounceUp();
+      balloon.bounceUp();
       scoreBoard.increase();
     });
   };
 
   const px = (value) => value + 'px';
 
-  const createBallElement = (ball) => {
-    const { id, position, size, color } = ball.getInfo();
+  const createBalloonElement = (balloon) => {
+    const { id, position, size, color } = balloon.getInfo();
 
     const viewElement = document.getElementById('view');
-    const ballElement = document.createElement('div');
+    const balloonElement = document.createElement('div');
 
-    ballElement.id = id;
-    ballElement.style.top = px(position.y);
-    ballElement.style.left = px(position.x);
-    ballElement.style.width = px(size);
-    ballElement.style['background-color'] = color;
+    balloonElement.id = id;
+    balloonElement.style.top = px(position.y);
+    balloonElement.style.left = px(position.x);
+    balloonElement.style.width = px(size);
+    balloonElement.style['background-color'] = color;
 
-    viewElement.appendChild(ballElement);
-    return ballElement;
+    viewElement.appendChild(balloonElement);
+    return balloonElement;
   };
 
   const createScoreElement = (scoreBoard) => {
@@ -113,11 +113,11 @@
     return scoreElement;
   };
 
-  const updateBallElement = (ball) => {
-    const ballElement = document.getElementById('ball');
-    const { position } = ball.getInfo();
-    ballElement.style.top = px(position.y);
-    ballElement.style.left = px(position.x);
+  const updateBalloonElement = (balloon) => {
+    const balloonElement = document.getElementById('balloon');
+    const { position } = balloon.getInfo();
+    balloonElement.style.top = px(position.y);
+    balloonElement.style.left = px(position.x);
   };
 
   const updateScoreBoardElement = (score) => {
@@ -137,21 +137,21 @@
 
   const startGame = () => {
     const bounds = createBounds();
-    const ball = new Ball('ball', 100, '#AE2012', { x: 0, y: 0 }, { dx: 2, dy: 4 });
+    const balloon = new Balloon('balloon', 100, '#AE2012', { x: 0, y: 0 }, { dx: 2, dy: 4 });
     const scoreBoard = new ScoreBoard('score');
-    const ballElement = createBallElement(ball);
+    const balloonElement = createBalloonElement(balloon);
     createScoreElement(scoreBoard);
 
-    addClickEvent(ballElement, ball, scoreBoard);
+    addClickEvent(balloonElement, balloon, scoreBoard);
 
     const intervalId = setInterval(() => {
-      if (ball.hasHitFloor(bounds)) {
+      if (balloon.hasHitFloor(bounds)) {
         clearInterval(intervalId);
         alert('Game over.');
         return;
       }
-      ball.move(bounds);
-      updateBallElement(ball);
+      balloon.move(bounds);
+      updateBalloonElement(balloon);
       updateScoreBoardElement(scoreBoard);
     }, 30);
   };

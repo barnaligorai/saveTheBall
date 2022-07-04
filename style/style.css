@@ -17,7 +17,7 @@ body {
   row-gap: 10px;
 }
 
-#ball {
+#balloon {
   aspect-ratio: 1;
   border-radius: 50%;
   position: relative;
